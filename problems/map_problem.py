@@ -38,7 +38,7 @@ class MapProblem(GraphProblem):
 
     name = 'StreetsMap'
 
-    def __init__(self, streets_map: StreetsMap, source_junction_id: int, target_junction_id: int, cost_func_name:str):
+    def __init__(self, streets_map: StreetsMap, source_junction_id: int, target_junction_id: int, cost_func_name: str):
         initial_state = MapState(source_junction_id)
         super(MapProblem, self).__init__(initial_state)
         self.streets_map = streets_map
@@ -48,30 +48,30 @@ class MapProblem(GraphProblem):
         self.cost_func_name = cost_func_name
         self.time_to_goal_shortest_paths_based_data = None
         self.time_to_goal_history_based_data = None
-    
+
     def set_additional_shortest_paths_based_data(self):
-        # [Ex.24]: Don't edit this function! It just gives you more info.
+        # TODO:: [Ex.24]: Don't edit this function! It just gives you more info.
         #           This function loads the shortest paths data from a csv file.
         #           It reads the file, and assigns the data matching to the problem's self.target_junction_id
         #           to the class variable self.time_to_goal_shortest_paths_based_data
 
         # set the data file path
         shortest_paths_file_path = os.path.join(Consts.DATA_PATH, 'shortest_paths.csv')
-        
+
         # read the csv file
-        df = pd.read_csv(shortest_paths_file_path) 
-        
+        df = pd.read_csv(shortest_paths_file_path)
+
         # self-check, if the data file includes self.target_junction_id 
-        assert(str(self.target_junction_id) in df.columns)
+        assert (str(self.target_junction_id) in df.columns)
 
         # extract the data matching to self.target_junction_id and convert to np.array.
         # note: you can extract the data of a single column named 'name' from a pd.DataFrame 'df' by: df['name']
         data = df[str(self.target_junction_id)].to_numpy()
-        
-        self.time_to_goal_shortest_paths_based_data = data # assign the data
+
+        self.time_to_goal_shortest_paths_based_data = data  # assign the data
 
     def set_additional_history_based_data(self):
-        #TODO [Ex.26]: Load additional history-based data and assign it to a class variable:
+        # TODO [Ex.26]: Load additional history-based data and assign it to a class variable:
         #               (1) Load the csv file history_4_days_target_{target_id}.csv to a pd.DataFrame (pandas dataframe).
         #                   Its parent folder is framework/db/ which is the same as the parent folder of shortest_paths.csv.
         #                   Use the code in self.set_additional_shortest_paths_based_data() for help!
@@ -83,12 +83,10 @@ class MapProblem(GraphProblem):
         #               (3) Assign self.time_to_goal_history_based_data the result of the mean.
         #                   Note: the result should be of type np.array.
         #                           you can convert a pd.DataFrame to np.array using pd.DataFrame.to_numpy()
-        days_of_the_week = ['Sun', 'Mon', 'Tue', 'Wed'] # optional variable
+        days_of_the_week = ['Sun', 'Mon', 'Tue', 'Wed']  # optional variable
         raise NotImplementedError  # TODO: remove this line!
 
-
-        assert(type(self.time_to_goal_history_based_data) is np.ndarray) # self-check
-
+        assert (type(self.time_to_goal_history_based_data) is np.ndarray)  # self-check
 
     def expand_state_with_costs(self, state_to_expand: GraphProblemState) -> Iterator[OperatorResult]:
         """
@@ -119,7 +117,16 @@ class MapProblem(GraphProblem):
         #  Note: Generally, in order to check whether a variable is set to None you should use the expression:
         #        `my_variable_to_check is None`, and particularly do NOT use comparison (==).
 
-        yield OperatorResult(successor_state=MapState(self.target_junction_id), operator_cost=7)  # TODO: remove this line!
+        for link in junction.outgoing_links:
+            if self.cost_func_name == 'distance':
+                yield OperatorResult(successor_state=MapState(link.target),
+                                     operator_cost=link.distance)
+            if self.cost_func_name == 'scheduled_time':
+                yield OperatorResult(successor_state=MapState(link.target),
+                                     operator_cost=link.compute_scheduled_time())
+            if self.cost_func_name == 'current_time':
+                yield OperatorResult(successor_state=MapState(link.target),
+                                     operator_cost=link.compute_current_time())
 
     def is_goal(self, state: GraphProblemState) -> bool:
         """
@@ -129,6 +136,5 @@ class MapProblem(GraphProblem):
 
         # TODO [Ex.9]: modify the returned value to indicate whether `state` is a final state.
         # You may use the problem's input parameters (stored as fields of this object by the constructor).
-        
-        return state.junction_id == 14593  # TODO: modify this!
-        
+
+        return state.junction_id == self.target_junction_id
