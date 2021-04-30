@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 import matplotlib.image as img
 
 # since the road distance is in meters, the speed is in meters per minute
-kmph_to_mpm = lambda kmh: kmh * 16.667 # 1[kilometer]=1000[meter], 1[hour]=60[minute], 1[kmh]=100/60[mpm]=1.6667[mpm]
+kmph_to_mpm = lambda kmh: kmh * 16.667  # 1[kilometer]=1000[meter], 1[hour]=60[minute], 1[kmh]=100/60[mpm]=1.6667[mpm]
 ROAD_SPEEDS = [kmph_to_mpm(kmh) for kmh in [60, 70, 80, 90, 100, 120]]
 ROAD_SPEEDS_PROBS = [0.3, 0.2, 0.2, 0.1, 0.1, 0.1]
 MIN_ROADS_SPEED = min(ROAD_SPEEDS)
@@ -25,6 +25,7 @@ MIN_ROADS_CURRENT_SPEED = kmph_to_mpm(20)
 class Coordinates:
     lat: float
     lon: float
+
 
 def compute_air_distance_between_coordinates(point1: Coordinates, point2: Coordinates) -> float:
     """
@@ -76,16 +77,16 @@ class Link:
 
     def get_symmetric_hash(self):
         return hash(frozenset((self.source, self.target)))
-    
+
     # TODO [Ex.8]:
-    # Compute and return the current driving time based on the given current_speed
+    # Compute and return the scheduled driving time based on the given max_speed
     def compute_scheduled_time(self):
-        raise NotImplementedError  # TODO: remove this line!
+        return self.distance / self.max_speed
 
     # TODO [Ex.8]:
     # Compute and return the current driving time based on the given current_speed
     def compute_current_time(self):
-        raise NotImplementedError  # TODO: remove this line!
+        return self.distance / self.current_speed
 
 
 @dataclass
@@ -115,9 +116,9 @@ class Junction:
     #     return f'{self.index}'
 
     def calc_air_distance_from(self, other_junction: 'Junction') -> float:
-        assert(isinstance(other_junction, Junction))
+        assert (isinstance(other_junction, Junction))
         return compute_air_distance_between_coordinates(self.coordinates, other_junction.coordinates)
-    
+
     @property
     def all_connected_links(self) -> Iterator[Link]:
         return itertools.chain(self.outgoing_links, self.incoming_links)
@@ -174,7 +175,8 @@ class StreetsMap(Dict[int, Junction]):
 
     def remove_zero_distance_links(self):
         for junction in self.junctions():
-            junction.outgoing_links = tuple(link for link in junction.outgoing_links if not math.isclose(link.distance, 0))
+            junction.outgoing_links = tuple(
+                link for link in junction.outgoing_links if not math.isclose(link.distance, 0))
 
     def set_links_max_speed_and_is_toll(self, q=55):
         long_road_distance = np.percentile(a=np.array(list(link.distance for link in self.iterlinks())), q=q)
@@ -184,14 +186,13 @@ class StreetsMap(Dict[int, Junction]):
             link.max_speed = MAX_ROADS_SPEED if link.is_toll_road else rnd.choice(ROAD_SPEEDS, p=ROAD_SPEEDS_PROBS)
 
     def set_links_current_speed(self, prob_update_current_speed=0.3):
-        # set the current speed of each link, based on its max_speed, the probability for change and MIN_ROAD_CURRENT_SPEED 
+        # set the current speed of each link, based on its max_speed, the probability for change and MIN_ROAD_CURRENT_SPEED
         for link in self.iterlinks():
             if np.random.rand() >= prob_update_current_speed:
                 link.current_speed = link.max_speed
             else:
                 link.current_speed = max(np.random.rand() * link.max_speed, MIN_ROADS_CURRENT_SPEED)
-                
-                    
+
     # @staticmethod
     # def get_max_speed_bounds():
     #     return MIN_ROADS_SPEED, MAX_ROADS_SPEED
@@ -212,18 +213,17 @@ class StreetsMap(Dict[int, Junction]):
     def visualize(self, file_path, path=None, resolution=10000):
         # plot the city map and a path (if given)
 
-        coord2pixel = lambda cur_coord, min_coord: int((cur_coord-min_coord) * resolution)
+        coord2pixel = lambda cur_coord, min_coord: int((cur_coord - min_coord) * resolution)
 
         max_lon, max_lat = 0, 0
         min_lon, min_lat = np.inf, np.inf
-        
-        
+
         for junction in self.junctions():
             max_lon = max(junction.lon, max_lon)
             min_lon = min(junction.lon, min_lon)
             max_lat = max(junction.lat, max_lat)
             min_lat = min(junction.lat, min_lat)
-        
+
         dy = int(np.ceil((max_lon - min_lon) * resolution))
         dx = int(np.ceil((max_lat - min_lat) * resolution))
         map_junctions = np.zeros((dx, dy))
@@ -232,8 +232,8 @@ class StreetsMap(Dict[int, Junction]):
             x = coord2pixel(junction.lat, min_lat)
             y = coord2pixel(junction.lon, min_lon)
             map_junctions[x, y] = 0.5
-            pixel_list.append((x,y))
-        
+            pixel_list.append((x, y))
+
         if path is None:
             img.imsave(file_path, map_junctions, cmap='magma')
 
@@ -255,7 +255,7 @@ class StreetsMap(Dict[int, Junction]):
                 x = coord2pixel(junction[0], min_lat)
                 y = coord2pixel(junction[1], min_lon)
                 map_junctions[x, y] = 1
-                pixel_list.append((x,y))
+                pixel_list.append((x, y))
                 max_x = max(max_x, x)
                 min_x = min(min_x, x)
                 max_y = max(max_y, y)
