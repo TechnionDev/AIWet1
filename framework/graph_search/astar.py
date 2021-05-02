@@ -36,7 +36,7 @@ class AStar(BestFirstSearch):
         """
         super(AStar, self)._init_solver(problem)
         self.heuristic_function = self.heuristic_function_type(problem)
-        self.solver_name = f'{self.__class__.solver_name} (h={self.heuristic_function.heuristic_name}, w={self.heuristic_weight:.3f})'
+        self.solver_name = f'{self.__class__.solver_name} (h={self.heuristic_function.heuristic_name}, w={self.heuristic_weight:.3f}) '
 
     def _calc_node_expanding_priority(self, search_node: SearchNode) -> float:
         """
@@ -49,8 +49,9 @@ class AStar(BestFirstSearch):
         Remember: In Weighted-A* the f-score is defined by ((1-w) * cost) + (w * h(state)).
         Notice: You may use `search_node.g_cost`, `self.heuristic_weight`, and `self.heuristic_function`.
         """
-
-        raise NotImplementedError  # TODO: remove this line!
+        res = self.heuristic_function.estimate(search_node.state)
+        return ((1 - self.heuristic_weight) * search_node.g_cost) + (
+                self.heuristic_weight * self.heuristic_function.estimate(search_node.state))
 
     def _open_successor_node(self, problem: GraphProblem, successor_node: SearchNode):
         """
@@ -72,4 +73,17 @@ class AStar(BestFirstSearch):
                   but still could be improved.
         """
 
-        raise NotImplementedError  # TODO: remove this line!
+        if not (self.close.has_state(successor_node.state) or self.open.has_state(successor_node.state)):
+            self.open.push_node(successor_node)
+
+        elif self.open.has_state(successor_node.state):
+            state_in_open = self.open.get_node_by_state(successor_node.state)
+            if successor_node.g_cost < state_in_open.g_cost:
+                self.open.extract_node(state_in_open)
+                self.open.push_node(successor_node)
+        else:
+            state_in_close = self.close.get_node_by_state(successor_node.state)
+            if successor_node.g_cost < state_in_close.g_cost:
+                state_in_close = successor_node
+                self.open.push_node(successor_node)
+                self.close.remove_node(state_in_close)

@@ -1,12 +1,11 @@
 from framework.graph_search.astar import AStar
-from framework import * 
+from framework import *
 from problems import *
 
 from matplotlib import pyplot as plt
 import numpy as np
 from typing import List, Union, Optional
 import os
-
 
 # Load the streets map
 streets_map = StreetsMap.load_from_csv(Consts.get_data_file_path("tlv_streets_map_cur_speeds.csv"))
@@ -101,6 +100,7 @@ def within_focal_h_sum_priority_function(node: SearchNode, problem: GraphProblem
     focal_heuristic = getattr(solver, '__focal_heuristic')
     return focal_heuristic.estimate(node.state)
 
+
 def toy_map_problem_experiment():
     print()
     print('Solve the distance-based map problem.')
@@ -109,16 +109,17 @@ def toy_map_problem_experiment():
 
     target_point = 549
     start_point = 82700
-    
-    dist_map_problem = MapProblem(streets_map, start_point, target_point, 'distance') 
-    
+
+    dist_map_problem = MapProblem(streets_map, start_point, target_point, 'distance')
+
     uc = UniformCost()
     res = uc.solve_problem(dist_map_problem)
     print(res)
-    
+
     # save visualization of the path
     file_path = os.path.join(Consts.IMAGES_PATH, 'UCS_path_distance_based.png')
     streets_map.visualize(path=res, file_path=file_path)
+
 
 def map_problem_experiments():
     print()
@@ -146,7 +147,11 @@ def map_problem_experiments():
     #       solve the same `map_problem` with it and print the results (as before).
     # Notice: AStar constructor receives the heuristic *type* (ex: `MyHeuristicClass`),
     #         and NOT an instance of the heuristic (eg: not `MyHeuristicClass()`).
-    exit()  # TODO: remove!
+    a_star = AStar(NullHeuristic)
+    res = a_star.solve_problem(map_problem)
+    print(res)
+    file_path = os.path.join(Consts.IMAGES_PATH, 'ASTAR_path_time_based.png')
+    streets_map.visualize(path=res, file_path=file_path)
 
     # TODO [Ex.18]: create an instance of `AStar` with the `TimeBasedAirDistHeuristic`,
     #       and use the default value for the heuristic_weight,  
@@ -169,7 +174,7 @@ def map_problem_experiments():
     #               2. create an instance of `AStar` with the `ShortestPathsBasedHeuristic`,
     #                  solve the same `map_problem` with it and print the results (as before).
     exit()  # TODO: remove!
-    
+
     # TODO [Ex.25]: 1. Call the function set_additional_history_based_data()
     #                   to set the additional history-based data in `map_problem`.
     #                   For more info see `problems/map_problem.py`.
