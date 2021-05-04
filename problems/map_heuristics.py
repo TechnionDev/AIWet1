@@ -5,6 +5,7 @@ from .map_problem import MapProblem, MapState
 import numpy as np
 import os
 
+
 class TimeBasedAirDistHeuristic(HeuristicFunction):
     heuristic_name = 'TimeBasedAirDist'
 
@@ -25,8 +26,9 @@ class TimeBasedAirDistHeuristic(HeuristicFunction):
         """
         assert isinstance(self.problem, MapProblem)
         assert isinstance(state, MapState)
-
-        raise NotImplementedError  # TODO: remove this line!
+        target_junction = self.problem.streets_map[self.problem.target_junction_id]
+        air_distance = self.problem.streets_map[state.junction_id].calc_air_distance_from(target_junction)
+        return air_distance / MAX_ROADS_SPEED
 
 
 class ShortestPathsBasedHeuristic(HeuristicFunction):
@@ -35,8 +37,9 @@ class ShortestPathsBasedHeuristic(HeuristicFunction):
     def estimate(self, state: GraphProblemState) -> float:
         assert isinstance(self.problem, MapProblem)
         assert isinstance(state, MapState)
-        
+
         return self.problem.time_to_goal_shortest_paths_based_data[state.junction_id]
+
 
 class HistoryBasedHeuristic(HeuristicFunction):
     heuristic_name = 'HistoryBased'
@@ -46,5 +49,3 @@ class HistoryBasedHeuristic(HeuristicFunction):
         assert isinstance(state, MapState)
 
         return self.problem.time_to_goal_history_based_data[state.junction_id]
-
-        
