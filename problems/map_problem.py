@@ -75,8 +75,8 @@ class MapProblem(GraphProblem):
         #               (1) Load the csv file history_4_days_target_{target_id}.csv to a pd.DataFrame (pandas dataframe).
         #                   Its parent folder is framework/db/ which is the same as the parent folder of shortest_paths.csv.
         #                   Use the code in self.set_additional_shortest_paths_based_data() for help!
-        #                   Each column contains data of a single day, and each row contains data of a single source: 
-        #                       the data is the path cost from each source (each row) to target_id, 
+        #                   Each column contains data of a single day, and each row contains data of a single source:
+        #                       the data is the path cost from each source (each row) to target_id,
         #                       based on current_speed on that day (each col).
         #               (2) Compute the mean for each source over the 4 days.
         #                   You can use pd.DataFrame.mean(axis=1) (recommended. see pandas documentation)
@@ -84,7 +84,11 @@ class MapProblem(GraphProblem):
         #                   Note: the result should be of type np.array.
         #                           you can convert a pd.DataFrame to np.array using pd.DataFrame.to_numpy()
         days_of_the_week = ['Sun', 'Mon', 'Tue', 'Wed']  # optional variable
-        raise NotImplementedError  # TODO: remove this line!
+        history_4_days_file_path = os.path.join(Consts.DATA_PATH,
+                                                f'history_4_days_target_{self.target_junction_id}.csv')
+        csv_file = pd.read_csv(history_4_days_file_path)
+        df = pd.DataFrame(data=csv_file)
+        df.mean(axis=1)  # TODO::NOT FINISHED
 
         assert (type(self.time_to_goal_history_based_data) is np.ndarray)  # self-check
 
