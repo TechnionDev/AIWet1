@@ -145,51 +145,51 @@ def map_problem_experiments():
     #       3. save the visualization of the path in 'images/UCS_path_time_based.png'
     # You can use the code in the function 'toy_map_problem_experiment' for help.
     map_problem = MapProblem(streets_map, start_point, target_point, 'current_time')
-    # uc = UniformCost()
-    # res = uc.solve_problem(map_problem)
-    # print(res)
-    # file_path = os.path.join(Consts.IMAGES_PATH, 'UCS_path_time_based.png')
-    # streets_map.visualize(path=res, file_path=file_path)
-    #
-    # # TODO [Ex.16]: create an instance of `AStar` with the `NullHeuristic` (implemented in
-    # #       `framework\graph_search\graph_problem_interface.py`),
-    # #       solve the same `map_problem` with it and print the results (as before).
-    # # Notice: AStar constructor receives the heuristic *type* (ex: `MyHeuristicClass`),
-    # #         and NOT an instance of the heuristic (eg: not `MyHeuristicClass()`).
+    uc = UniformCost()
+    res = uc.solve_problem(map_problem)
+    print(res)
+    file_path = os.path.join(Consts.IMAGES_PATH, 'UCS_path_time_based.png')
+    streets_map.visualize(path=res, file_path=file_path)
+
+    # TODO [Ex.16]: create an instance of `AStar` with the `NullHeuristic` (implemented in
+    #       `framework\graph_search\graph_problem_interface.py`),
+    #       solve the same `map_problem` with it and print the results (as before).
+    # Notice: AStar constructor receives the heuristic *type* (ex: `MyHeuristicClass`),
+    #         and NOT an instance of the heuristic (eg: not `MyHeuristicClass()`).
     # a_star = AStar(NullHeuristic)
     # res = a_star.solve_problem(map_problem)
     # print(res)
     # file_path = os.path.join(Consts.IMAGES_PATH, 'ASTAR_path_time_based.png')
     # streets_map.visualize(path=res, file_path=file_path)
-    #
-    # # TODO [Ex.18]: create an instance of `AStar` with the `TimeBasedAirDistHeuristic`,
-    # #       and use the default value for the heuristic_weight,
-    # #       solve the same `map_problem` with it and print the results (as before).
+
+    # TODO [Ex.18]: create an instance of `AStar` with the `TimeBasedAirDistHeuristic`,
+    #       and use the default value for the heuristic_weight,
+    #       solve the same `map_problem` with it and print the results (as before).
     # a_star = AStar(TimeBasedAirDistHeuristic)
     # res = a_star.solve_problem(map_problem)
     # print(res)
     # file_path = os.path.join(Consts.IMAGES_PATH, 'ASTAR_Time_Based_AirDist_Heuristic_.png')
     # streets_map.visualize(path=res, file_path=file_path)
-    #
-    # # TODO [Ex.20]:
-    # #  1. Complete the implementation of the function
-    # #     `run_astar_for_weights_in_range()` (upper in this file).
-    # #  2. Complete the implementation of the function
-    # #     `plot_distance_and_expanded_wrt_weight_figure()`
-    # #     (upper in this file).
-    # #  3. Call here the function `run_astar_for_weights_in_range()`
-    # #     with `TimeBasedAirDistHeuristic` and `map_problem`.
+
+    # TODO [Ex.20]:
+    #  1. Complete the implementation of the function
+    #     `run_astar_for_weights_in_range()` (upper in this file).
+    #  2. Complete the implementation of the function
+    #     `plot_distance_and_expanded_wrt_weight_figure()`
+    #     (upper in this file).
+    #  3. Call here the function `run_astar_for_weights_in_range()`
+    #     with `TimeBasedAirDistHeuristic` and `map_problem`.
     # run_astar_for_weights_in_range(TimeBasedAirDistHeuristic, map_problem)
-    #
-    # # TODO [Ex.24]: 1. Call the function set_additional_shortest_paths_based_data()
-    # #                   to set the additional shortest-paths-based data in `map_problem`.
-    # #                   For more info see `problems/map_problem.py`.
-    # #               2. create an instance of `AStar` with the `ShortestPathsBasedHeuristic`,
-    # #                  solve the same `map_problem` with it and print the results (as before).
-    # map_problem.set_additional_shortest_paths_based_data()
-    # a_star = AStar(ShortestPathsBasedHeuristic)
-    # res = a_star.solve_problem(map_problem)
-    # print(res)
+
+    # TODO [Ex.24]: 1. Call the function set_additional_shortest_paths_based_data()
+    #                   to set the additional shortest-paths-based data in `map_problem`.
+    #                   For more info see `problems/map_problem.py`.
+    #               2. create an instance of `AStar` with the `ShortestPathsBasedHeuristic`,
+    #                  solve the same `map_problem` with it and print the results (as before).
+    map_problem.set_additional_shortest_paths_based_data()
+    a_star = AStar(ShortestPathsBasedHeuristic)
+    res = a_star.solve_problem(map_problem)
+    print(res)
 
     # TODO [Ex.25]: 1. Call the function set_additional_history_based_data()
     #                   to set the additional history-based data in `map_problem`.

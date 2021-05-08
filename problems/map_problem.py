@@ -87,8 +87,8 @@ class MapProblem(GraphProblem):
         history_4_days_file_path = os.path.join(Consts.DATA_PATH,
                                                 f'history_4_days_target_{self.target_junction_id}.csv')
         csv_file = pd.read_csv(history_4_days_file_path)
-        df = pd.DataFrame(data=csv_file)
-        df.mean(axis=1)  # TODO::NOT FINISHED
+        df = pd.DataFrame(data=csv_file).to_numpy()
+        self.time_to_goal_history_based_data = df.mean(axis=1)
 
         assert (type(self.time_to_goal_history_based_data) is np.ndarray)  # self-check
 
